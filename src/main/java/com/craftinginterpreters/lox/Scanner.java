@@ -1,30 +1,49 @@
 package com.craftinginterpreters.lox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static com.craftinginterpreters.lox.TokenType.AND;
 import static com.craftinginterpreters.lox.TokenType.BANG;
 import static com.craftinginterpreters.lox.TokenType.BANG_EQUAL;
+import static com.craftinginterpreters.lox.TokenType.CLASS;
 import static com.craftinginterpreters.lox.TokenType.COMMA;
 import static com.craftinginterpreters.lox.TokenType.DOT;
+import static com.craftinginterpreters.lox.TokenType.ELSE;
 import static com.craftinginterpreters.lox.TokenType.EOF;
 import static com.craftinginterpreters.lox.TokenType.EQUAL;
 import static com.craftinginterpreters.lox.TokenType.EQUAL_EQUAL;
+import static com.craftinginterpreters.lox.TokenType.FALSE;
+import static com.craftinginterpreters.lox.TokenType.FOR;
+import static com.craftinginterpreters.lox.TokenType.FUN;
 import static com.craftinginterpreters.lox.TokenType.GREATER;
 import static com.craftinginterpreters.lox.TokenType.GREATER_EQUAL;
+import static com.craftinginterpreters.lox.TokenType.IDENTIFIER;
+import static com.craftinginterpreters.lox.TokenType.IF;
 import static com.craftinginterpreters.lox.TokenType.LEFT_BRACE;
 import static com.craftinginterpreters.lox.TokenType.LEFT_PAREN;
 import static com.craftinginterpreters.lox.TokenType.LESS;
 import static com.craftinginterpreters.lox.TokenType.LESS_EQUAL;
 import static com.craftinginterpreters.lox.TokenType.MINUS;
+import static com.craftinginterpreters.lox.TokenType.NIL;
 import static com.craftinginterpreters.lox.TokenType.NUMBER;
+import static com.craftinginterpreters.lox.TokenType.OR;
 import static com.craftinginterpreters.lox.TokenType.PLUS;
+import static com.craftinginterpreters.lox.TokenType.PRINT;
+import static com.craftinginterpreters.lox.TokenType.RETURN;
 import static com.craftinginterpreters.lox.TokenType.RIGHT_BRACE;
 import static com.craftinginterpreters.lox.TokenType.RIGHT_PAREN;
 import static com.craftinginterpreters.lox.TokenType.SEMICOLON;
 import static com.craftinginterpreters.lox.TokenType.SLASH;
 import static com.craftinginterpreters.lox.TokenType.STAR;
 import static com.craftinginterpreters.lox.TokenType.STRING;
+import static com.craftinginterpreters.lox.TokenType.SUPER;
+import static com.craftinginterpreters.lox.TokenType.THIS;
+import static com.craftinginterpreters.lox.TokenType.TRUE;
+import static com.craftinginterpreters.lox.TokenType.VAR;
+import static com.craftinginterpreters.lox.TokenType.WHILE;
 
 class Scanner {
   private final String source;
@@ -32,7 +51,28 @@ class Scanner {
   private int start = 0;
   private int current = 0;
   private int line = 1;
-  
+  private static final Map<String, TokenType> keywords;
+
+  static {
+    keywords = new HashMap<>();
+    keywords.put("and",    AND);
+    keywords.put("class",  CLASS);
+    keywords.put("else",   ELSE);
+    keywords.put("false",  FALSE);
+    keywords.put("for",    FOR);
+    keywords.put("fun",    FUN);
+    keywords.put("if",     IF);
+    keywords.put("nil",    NIL);
+    keywords.put("or",     OR);
+    keywords.put("print",  PRINT);
+    keywords.put("return", RETURN);
+    keywords.put("super",  SUPER);
+    keywords.put("this",   THIS);
+    keywords.put("true",   TRUE);
+    keywords.put("var",    VAR);
+    keywords.put("while",  WHILE);
+  }
+
   Scanner(String source) {
     this.source = source;
   }
@@ -86,7 +126,6 @@ class Scanner {
       case '\t':
         // Ignore whitespace.
         break;
-
       case '\n':
         line++;
         break;           
@@ -94,11 +133,21 @@ class Scanner {
       default:
         if (isDigit(c)) {
           number();
+        } else if (isAlpha(c)) {
+          identifier();          
         } else {
           Lox.error(line, "Unexpected character.");
         }            
     }
   }  
+
+  private void identifier() {
+    while (isAlphaNumeric(peek())) advance();
+    String text = source.substring(start, current);
+    TokenType type = keywords.get(text);
+    if (type == null) type = IDENTIFIER;
+    addToken(type);
+  }
 
   private void number() {
     while (isDigit(peek())) advance();
@@ -112,7 +161,7 @@ class Scanner {
     }
 
     addToken(NUMBER,
-        Double.parseDouble(source.substring(start, current)));
+        Double.valueOf(source.substring(start, current)));
   }
 
   private void string() {
@@ -151,6 +200,16 @@ class Scanner {
     if (current + 1 >= source.length()) return '\0';
     return source.charAt(current + 1);
   } 
+
+  private boolean isAlpha(char c) {
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+            c == '_';
+  }
+
+  private boolean isAlphaNumeric(char c) {
+    return isAlpha(c) || isDigit(c);
+  }
 
   private boolean isDigit(char c) {
     return c >= '0' && c <= '9';
