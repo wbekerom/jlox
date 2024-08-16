@@ -13,6 +13,12 @@
         {
             "type": "jdk",
             "request": "launch",
+            "name": "Run AstPrinter.java",
+            "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox/AstPrinter.java"
+        },
+        {
+            "type": "jdk",
+            "request": "launch",
             "name": "Run GenerateAst.java",
             "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/tool/GenerateAst.java",
             "args": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox"
