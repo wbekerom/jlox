@@ -3,11 +3,19 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [        
         {
             "type": "jdk",
             "request": "launch",
-            "name": "Launch Java App"
+            "name": "Run Lox.java",
+            "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox/Lox.java"
+        },
+        {
+            "type": "jdk",
+            "request": "launch",
+            "name": "Run GenerateAst.java",
+            "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/tool/GenerateAst.java",
+            "args": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox"
         }
     ]
 }
