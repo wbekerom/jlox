@@ -13,6 +13,13 @@
         {
             "type": "jdk",
             "request": "launch",
+            "name": "Run Lox with demo file",
+            "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox/Lox.java",
+            "args": "${workspaceRoot}/input/demo.lox"
+        },
+        {
+            "type": "jdk",
+            "request": "launch",
             "name": "Run AstPrinter.java",
             "mainClass": "${workspaceRoot}/src/main/java/com/craftinginterpreters/lox/AstPrinter.java"
         },
