@@ -16,6 +16,7 @@ import static com.craftinginterpreters.lox.TokenType.GREATER;
 import static com.craftinginterpreters.lox.TokenType.GREATER_EQUAL;
 import static com.craftinginterpreters.lox.TokenType.IDENTIFIER;
 import static com.craftinginterpreters.lox.TokenType.IF;
+import static com.craftinginterpreters.lox.TokenType.LEFT_BRACE;
 import static com.craftinginterpreters.lox.TokenType.LEFT_PAREN;
 import static com.craftinginterpreters.lox.TokenType.LESS;
 import static com.craftinginterpreters.lox.TokenType.LESS_EQUAL;
@@ -25,6 +26,7 @@ import static com.craftinginterpreters.lox.TokenType.NUMBER;
 import static com.craftinginterpreters.lox.TokenType.PLUS;
 import static com.craftinginterpreters.lox.TokenType.PRINT;
 import static com.craftinginterpreters.lox.TokenType.RETURN;
+import static com.craftinginterpreters.lox.TokenType.RIGHT_BRACE;
 import static com.craftinginterpreters.lox.TokenType.RIGHT_PAREN;
 import static com.craftinginterpreters.lox.TokenType.SEMICOLON;
 import static com.craftinginterpreters.lox.TokenType.SLASH;
@@ -100,7 +102,7 @@ class Parser {
 
   private Stmt statement() {
     if (match(PRINT)) return printStatement();
-
+    if (match(LEFT_BRACE)) return new Stmt.Block(block());
     return expressionStatement();
   }
 
@@ -115,6 +117,17 @@ class Parser {
     consume(SEMICOLON, "Expect ';' after expression.");
     return new Stmt.Expression(expr);
   }  
+
+  private List<Stmt> block() {
+    List<Stmt> statements = new ArrayList<>();
+
+    while (!check(RIGHT_BRACE) && !isAtEnd()) {
+      statements.add(declaration());
+    }
+
+    consume(RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
+  }
 
   private Expr equality() {
     Expr expr = comparison();
