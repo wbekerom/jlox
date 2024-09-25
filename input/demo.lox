@@ -1,10 +1,8 @@
-var a = "global";
-{
-  fun showA() {
-    print a;
-  }
+class Bagel {}
+var bagel = Bagel();
+bagel.topping = "sugar";
+bagel.calories = 42;
 
-  showA();
-  var a = "block";
-  showA();
-} 
+print bagel; // Prints "Bagel instance".
+print bagel.topping; // Prints "Bagel instance".
+print bagel.calories; // Prints "Bagel instance".
